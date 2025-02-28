@@ -29,6 +29,7 @@ scene.add(lightHelper, gridHelper)
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
+
 function addStar(){
   const geometry = new THREE.SphereGeometry(0.25, 24, 24);
   const material = new THREE.MeshStandardMaterial({color: 0xffffff})
@@ -46,7 +47,13 @@ Array(200).fill().forEach(addStar)
 // const spaceTexture = new THREE.TextureLoader().load('1.png');
 // scene.background = spaceTexture;
 
+const texture = new THREE.TextureLoader().load('2.png');
+const obj1 = new THREE.Mesh(
+  new THREE.BoxGeometry(3,3,3), 
+  new THREE.MeshBasicMaterial({map: texture})
+);
 
+scene.add(obj1);
 
 function animate() {
   requestAnimationFrame(animate);
