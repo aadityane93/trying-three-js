@@ -15,7 +15,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setPixelRatio (window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(3).setY(5); 
+camera.position.setZ(10).setY(8).setX(8); 
 
 renderer.render(scene, camera);
 
@@ -26,11 +26,11 @@ torus.scale.set(3,3,3);
 scene.add(torus)
 
 const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(0,6,0)
+pointLight.position.set(0,10,0)
 scene.add(pointLight)
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
-ambientLight.position.setY(10);
+ambientLight.position.setY(6);
 scene.add(pointLight, ambientLight)
 
 // const lightHelper = new THREE.PointLightHelper(pointLight)
@@ -93,8 +93,13 @@ loader.load(
     (gltf) => {
         laptopModel = gltf.scene;
         scene.add(laptopModel);
-        laptopModel.position.set(0, 4, 1);
-        laptopModel.scale.set(5,5,5);
+        laptopModel.position.set(4, 7.41, -2);
+        laptopModel.scale.set(15,15,15);
+        const axis = new THREE.Vector3(0, 1, 0);
+        axis.normalize();
+        const angle = THREE.MathUtils.degToRad(90);
+        laptopModel.rotateOnAxis(axis, angle);
+
     },
     (xhr) => {
         console.log(`Loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
@@ -164,9 +169,9 @@ mtlLoader.load('desk.mtl', (materials) => {
 let paper;
 
 const textureLoader1 = new THREE.TextureLoader();
-const diffuseTexture1 = textureLoader.load('textures/a4-sheet-006-metalness-metalness-4k.png'); 
-const normalTexture1 = textureLoader.load('textures/a4-sheet-006-nrm-metalness-4k.png'); 
-const roughnessTexture1 = textureLoader.load('textures/a4-sheet-006-roughness-metalness-4k.png'); 
+const diffuseTexture1 = textureLoader1.load('textures/a4-sheet-006-ao-metalness-4k.png'); 
+const normalTexture1 = textureLoader1.load('textures/a4-sheet-006-nrm-metalness-4k.png'); 
+const roughnessTexture1 = textureLoader1.load('textures/a4-sheet-006-roughness-metalness-4k.png'); 
 
 const mtlLoader1 = new MTLLoader();
 mtlLoader1.load('a4.mtl', (materials) => {
@@ -177,14 +182,18 @@ mtlLoader1.load('a4.mtl', (materials) => {
     objLoader1.load('a4.obj', (object) => {
         paper = object;
         scene.add(paper);
-        paper.position.set(0, 0, 0);
+        paper.position.set(-2.5, 7.41, 3);
         paper.scale.set(10, 10, 10);
+        const axis = new THREE.Vector3(0, 1, 0);
+        axis.normalize();
+        const angle = THREE.MathUtils.degToRad(180);
+        paper.rotateOnAxis(axis, angle);
 
         paper.traverse((child) => {
             if (child.isMesh) {
-                child.material.map = diffuseTexture;      
-                child.material.normalMap = normalTexture;
-                child.material.roughnessMap = roughnessTexture;
+                child.material.map = diffuseTexture1;      
+                child.material.normalMap = normalTexture1;
+                child.material.roughnessMap = roughnessTexture1;
                 child.material.needsUpdate = true;
             }
         });
