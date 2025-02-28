@@ -1,6 +1,9 @@
 import './style.css'
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1,1000);
 const renderer = new THREE.WebGLRenderer({
@@ -8,7 +11,8 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setPixelRatio (window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(30);
+camera.position.setZ(3).setY(5); 
+
 renderer.render(scene, camera);
 
 const geometry = new THREE.TorusGeometry(10,3,16,100)
@@ -17,15 +21,18 @@ const torus = new THREE.Mesh(geometry, material);
 scene.add(torus)
 
 const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(0,0,0)
+pointLight.position.set(0,2,0)
 scene.add(pointLight)
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
 scene.add(pointLight, ambientLight)
 
-const lightHelper = new THREE.PointLightHelper(pointLight)
+// const lightHelper = new THREE.PointLightHelper(pointLight)
+// scene.add(lightHelper)
+
 const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(lightHelper, gridHelper)
+scene.add(gridHelper)
+
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -47,13 +54,43 @@ Array(200).fill().forEach(addStar)
 // const spaceTexture = new THREE.TextureLoader().load('1.png');
 // scene.background = spaceTexture;
 
-const texture = new THREE.TextureLoader().load('2.png');
-const obj1 = new THREE.Mesh(
-  new THREE.BoxGeometry(3,3,3), 
-  new THREE.MeshBasicMaterial({map: texture})
+// const texture = new THREE.TextureLoader().load('2.png');
+// const obj1 = new THREE.Mesh(
+//   new THREE.BoxGeometry(3,3,3), 
+//   new THREE.MeshBasicMaterial({map: texture})
+// );
+
+// scene.add(obj1);
+
+let tableModel;
+const loader = new GLTFLoader();
+loader.load(
+    'table.glb', 
+    (gltf) => {
+        tableModel = gltf.scene;
+        scene.add(tableModel);
+        tableModel.position.set(0, 0, 0);
+        tableModel.scale.set(2,2,2);
+    },
+    (xhr) => {
+        console.log(`Loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+        console.error('Error loading model:', error);
+    }
 );
 
-scene.add(obj1);
+
+function moveCamera(){
+  const t = document.body.getBoundingClientRect().top;
+  if (tableModel){
+    tableModel.rotation.y = t * 0.001;
+  }
+
+}
+
+document.body.onscroll = moveCamera;
+
 
 function animate() {
   requestAnimationFrame(animate);
