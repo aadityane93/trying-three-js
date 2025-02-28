@@ -4,7 +4,8 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
-// import { TextureLoader } from 'three';
+import { pass } from 'three/tsl';
+
 
 
 const scene = new THREE.Scene();
@@ -18,7 +19,7 @@ camera.position.setZ(3).setY(5);
 
 renderer.render(scene, camera);
 
-const geometry = new THREE.TorusGeometry(10,3,16,60)
+const geometry = new THREE.TorusGeometry(20,3,30,60)
 const material = new THREE.MeshStandardMaterial({color:0xFF6347, wireframe: true})
 const torus = new THREE.Mesh(geometry, material);
 torus.scale.set(3,3,3);
@@ -67,23 +68,23 @@ scene.background = spaceTexture;
 
 // scene.add(obj1);
 
-let tableModel;
-const loader2 = new GLTFLoader();
-loader2.load(
-    'table.glb', 
-    (gltf) => {
-        tableModel = gltf.scene;
-        scene.add(tableModel);
-        tableModel.position.set(0, 0, 0);
-        tableModel.scale.set(4,4,4);
-    },
-    (xhr) => {
-        console.log(`Loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
-    },
-    (error) => {
-        console.error('Error loading model:', error);
-    }
-);
+// let tableModel;
+// const loader2 = new GLTFLoader();
+// loader2.load(
+//     'table.glb', 
+//     (gltf) => {
+//         tableModel = gltf.scene;
+//         scene.add(tableModel);
+//         tableModel.position.set(0, 0, 0);
+//         tableModel.scale.set(4,4,4);
+//     },
+//     (xhr) => {
+//         console.log(`Loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+//     },
+//     (error) => {
+//         console.error('Error loading model:', error);
+//     }
+// );
 
 let laptopModel;
 const loader = new GLTFLoader();
@@ -107,44 +108,94 @@ loader.load(
 
 
 
-
 let deskModel;
+
+const textureLoader = new THREE.TextureLoader();
+const diffuseTexture = textureLoader.load('textures/desk-022-col-metalness-4k.png'); 
+const normalTexture = textureLoader.load('textures/desk-022-nrm-metalness-4k.png'); 
+const roughnessTexture = textureLoader.load('textures/desk-022-roughness-metalness-4k.png'); 
+
 const mtlLoader = new MTLLoader();
 mtlLoader.load('desk.mtl', (materials) => {
-    materials.preload(); // Load materials first
+    materials.preload();
+    
     const objLoader = new OBJLoader();
-    objLoader.setMaterials(materials); // Apply MTL
+    objLoader.setMaterials(materials);
     objLoader.load('desk.obj', (object) => {
         deskModel = object;
         scene.add(deskModel);
         deskModel.position.set(0, 0, 0);
-        deskModel.scale.set(2, 2, 2);
+        deskModel.scale.set(10, 10, 10);
+
+        deskModel.traverse((child) => {
+            if (child.isMesh) {
+                child.material.map = diffuseTexture;      
+                child.material.normalMap = normalTexture;
+                child.material.roughnessMap = roughnessTexture;
+                child.material.needsUpdate = true;
+            }
+        });
     });
 });
 
 
-// const textureLoader = new TextureLoader();
-// const texture = textureLoader.load('table_texture.jpg');
+
+
+// const loader = new X3DLoader();
+// loader.load('laptop.x3d', (x3dScene) => {
+//     scene.add(x3dScene);
+//     x3dScene.scale.set(2, 2, 2); 
+//     x3dScene.position.set(0, 0, 0);
+// });
+
+
+// function moveCamera(){
+//   const t = document.body.getBoundingClientRect().top;
+//   if (tableModel){
+//     tableModel.rotation.y = t * 0.001;
+//   }
+
+// }
+
+// document.body.onscroll = moveCamera;
 
 
 
+let paper;
 
+const textureLoader1 = new THREE.TextureLoader();
+const diffuseTexture1 = textureLoader.load('textures/a4-sheet-006-metalness-metalness-4k.png'); 
+const normalTexture1 = textureLoader.load('textures/a4-sheet-006-nrm-metalness-4k.png'); 
+const roughnessTexture1 = textureLoader.load('textures/a4-sheet-006-roughness-metalness-4k.png'); 
 
-function moveCamera(){
-  const t = document.body.getBoundingClientRect().top;
-  if (tableModel){
-    tableModel.rotation.y = t * 0.001;
-  }
+const mtlLoader1 = new MTLLoader();
+mtlLoader1.load('a4.mtl', (materials) => {
+    materials.preload();
+    
+    const objLoader1 = new OBJLoader();
+    objLoader1.setMaterials(materials);
+    objLoader1.load('a4.obj', (object) => {
+        paper = object;
+        scene.add(paper);
+        paper.position.set(0, 0, 0);
+        paper.scale.set(10, 10, 10);
 
-}
-
-document.body.onscroll = moveCamera;
-
+        paper.traverse((child) => {
+            if (child.isMesh) {
+                child.material.map = diffuseTexture;      
+                child.material.normalMap = normalTexture;
+                child.material.roughnessMap = roughnessTexture;
+                child.material.needsUpdate = true;
+            }
+        });
+    });
+});
 
 function animate() {
   requestAnimationFrame(animate);
   torus.rotation.x += 0.01;
-  torus.rotation.y += 0.005;
+  torus.rotation.y += 0.01;
+  torus.rotation.z += 0.01;
   renderer.render(scene, camera);
 }
 
