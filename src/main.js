@@ -18,19 +18,27 @@ camera.position.setZ(10).setY(8).setX(8);
 
 renderer.render(scene, camera);
 
-const geometry = new THREE.TorusGeometry(50,5,20,60)
+const geometry = new THREE.TorusGeometry(50,7,40,60)
 const material = new THREE.MeshStandardMaterial({color:0xFF6347, wireframe: true})
 const torus = new THREE.Mesh(geometry, material);
 torus.scale.set(3,3,3);
 scene.add(torus)
 
 const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(0,10,0)
+pointLight.position.set(0,5,0)
 scene.add(pointLight)
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
 ambientLight.position.setY(6);
 scene.add(pointLight, ambientLight)
+
+const ambientLight2 = new THREE.AmbientLight(0xffffff);
+ambientLight2.position.setY(30);
+scene.add(pointLight, ambientLight)
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 10, 5);
+scene.add(directionalLight);
 
 // const lightHelper = new THREE.PointLightHelper(pointLight)
 // scene.add(lightHelper)
@@ -229,9 +237,9 @@ loader2.load(
 
 function animate() {
   requestAnimationFrame(animate);
-  torus.rotation.x += 0.01;
-  torus.rotation.y += 0.01;
-  torus.rotation.z += 0.01;
+  torus.rotation.x += 0.005;
+  torus.rotation.y += 0.006;
+  torus.rotation.z += 0.007;
   renderer.render(scene, camera);
 }
 
