@@ -2,6 +2,9 @@ import './style.css'
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
+// import { TextureLoader } from 'three';
 
 
 const scene = new THREE.Scene();
@@ -15,16 +18,18 @@ camera.position.setZ(3).setY(5);
 
 renderer.render(scene, camera);
 
-const geometry = new THREE.TorusGeometry(10,3,16,100)
+const geometry = new THREE.TorusGeometry(10,3,16,60)
 const material = new THREE.MeshStandardMaterial({color:0xFF6347, wireframe: true})
 const torus = new THREE.Mesh(geometry, material);
+torus.scale.set(3,3,3);
 scene.add(torus)
 
 const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(0,2,0)
+pointLight.position.set(0,6,0)
 scene.add(pointLight)
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
+ambientLight.position.setY(10);
 scene.add(pointLight, ambientLight)
 
 // const lightHelper = new THREE.PointLightHelper(pointLight)
@@ -51,8 +56,8 @@ function addStar(){
 Array(200).fill().forEach(addStar)
 
 
-// const spaceTexture = new THREE.TextureLoader().load('1.png');
-// scene.background = spaceTexture;
+const spaceTexture = new THREE.TextureLoader().load('black.png');
+scene.background = spaceTexture;
 
 // const texture = new THREE.TextureLoader().load('2.png');
 // const obj1 = new THREE.Mesh(
@@ -63,14 +68,14 @@ Array(200).fill().forEach(addStar)
 // scene.add(obj1);
 
 let tableModel;
-const loader = new GLTFLoader();
-loader.load(
+const loader2 = new GLTFLoader();
+loader2.load(
     'table.glb', 
     (gltf) => {
         tableModel = gltf.scene;
         scene.add(tableModel);
         tableModel.position.set(0, 0, 0);
-        tableModel.scale.set(2,2,2);
+        tableModel.scale.set(4,4,4);
     },
     (xhr) => {
         console.log(`Loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
@@ -79,6 +84,50 @@ loader.load(
         console.error('Error loading model:', error);
     }
 );
+
+let laptopModel;
+const loader = new GLTFLoader();
+loader.load(
+    'laptop.glb', 
+    (gltf) => {
+        laptopModel = gltf.scene;
+        scene.add(laptopModel);
+        laptopModel.position.set(0, 4, 1);
+        laptopModel.scale.set(5,5,5);
+    },
+    (xhr) => {
+        console.log(`Loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+        console.error('Error loading model:', error);
+    }
+);
+
+
+
+
+
+
+let deskModel;
+const mtlLoader = new MTLLoader();
+mtlLoader.load('desk.mtl', (materials) => {
+    materials.preload(); // Load materials first
+    const objLoader = new OBJLoader();
+    objLoader.setMaterials(materials); // Apply MTL
+    objLoader.load('desk.obj', (object) => {
+        deskModel = object;
+        scene.add(deskModel);
+        deskModel.position.set(0, 0, 0);
+        deskModel.scale.set(2, 2, 2);
+    });
+});
+
+
+// const textureLoader = new TextureLoader();
+// const texture = textureLoader.load('table_texture.jpg');
+
+
+
 
 
 function moveCamera(){
