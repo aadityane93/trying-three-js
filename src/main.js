@@ -4,7 +4,6 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
-import { pass } from 'three/tsl';
 
 
 
@@ -19,7 +18,7 @@ camera.position.setZ(10).setY(8).setX(8);
 
 renderer.render(scene, camera);
 
-const geometry = new THREE.TorusGeometry(20,3,30,60)
+const geometry = new THREE.TorusGeometry(50,5,20,60)
 const material = new THREE.MeshStandardMaterial({color:0xFF6347, wireframe: true})
 const torus = new THREE.Mesh(geometry, material);
 torus.scale.set(3,3,3);
@@ -93,7 +92,7 @@ loader.load(
     (gltf) => {
         laptopModel = gltf.scene;
         scene.add(laptopModel);
-        laptopModel.position.set(4, 7.41, -2);
+        laptopModel.position.set(4, 7.41, -1);
         laptopModel.scale.set(15,15,15);
         const axis = new THREE.Vector3(0, 1, 0);
         axis.normalize();
@@ -199,6 +198,34 @@ mtlLoader1.load('a4.mtl', (materials) => {
         });
     });
 });
+
+
+let lamp;
+const loader2 = new GLTFLoader();
+loader2.load(
+    'lamp.glb', 
+    (gltf) => {
+        lamp = gltf.scene;
+        scene.add(lamp);
+        lamp.position.set(-13, 0, -1);
+        lamp.scale.set(1,1,1);
+        // const axis = new THREE.Vector3(0, 1, 0);
+        // axis.normalize();
+        // const angle = THREE.MathUtils.degToRad(90);
+        // lamp.rotateOnAxis(axis, angle);
+
+    },
+    (xhr) => {
+        console.log(`Loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+        console.error('Error loading model:', error);
+    }
+);
+
+
+
+
 
 function animate() {
   requestAnimationFrame(animate);
