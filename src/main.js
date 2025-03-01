@@ -230,7 +230,7 @@ loader2.load(
         console.error('Error loading model:', error);
     }
 );
-
+ 
 
 
 function animate() {
