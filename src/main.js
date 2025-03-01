@@ -233,8 +233,6 @@ loader2.load(
 
 
 
-
-
 function animate() {
   requestAnimationFrame(animate);
   torus.rotation.x += 0.005;
