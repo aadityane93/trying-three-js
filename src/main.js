@@ -232,6 +232,28 @@ loader2.load(
 );
  
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener("click", (event) => {
+    if (!laptopModel) return;
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObject(laptopModel, true);
+    
+    if (intersects.length > 0) {
+        // console.log("Laptop Model Clicked!");
+
+        laptopModel.scale.set(15,15,15);
+
+        
+    }
+});
+
+
 
 function animate() {
   requestAnimationFrame(animate);
