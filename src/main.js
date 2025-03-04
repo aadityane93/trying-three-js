@@ -14,15 +14,15 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setPixelRatio (window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(10).setY(8).setX(8); 
+camera.position.setZ(12).setY(8).setX(8); 
 
 renderer.render(scene, camera);
 
 const geometry = new THREE.TorusGeometry(50,7,40,60)
 const material = new THREE.MeshStandardMaterial({color:0xFF6347, wireframe: true})
 const torus = new THREE.Mesh(geometry, material);
-torus.scale.set(3,3,3);
-scene.add(torus)
+// torus.scale.set(3,3,3);
+// scene.add(torus)
 
 const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(0,5,0)
@@ -245,11 +245,34 @@ window.addEventListener("click", (event) => {
     const intersects = raycaster.intersectObject(laptopModel, true);
     
     if (intersects.length > 0) {
-        // console.log("Laptop Model Clicked!");
-
-        laptopModel.scale.set(15,15,15);
-
+        console.log("Laptop Model Clicked!");
         
+        let overlay = document.createElement("div");
+        overlay.id = "fullscreenOverlay";
+        overlay.innerHTML = `
+            <div id="overlayContent">
+                <h1>This is Overlay</h1>
+                <p>Example of a fullscreen overlay.</p>
+                <button id="closeOverlay">Close</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100vw";
+        overlay.style.height = "100vh";
+        overlay.style.background = "rgba(0, 0, 0, 0.9)";
+        overlay.style.display = "flex";
+        overlay.style.justifyContent = "center";
+        overlay.style.alignItems = "center";
+        overlay.style.color = "#fff";
+        overlay.style.zIndex = "1000";
+
+        document.getElementById("closeOverlay").addEventListener("click", () => {
+            overlay.remove();
+        });
     }
 });
 
